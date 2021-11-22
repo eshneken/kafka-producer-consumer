@@ -15,10 +15,11 @@ The usecase this surfaces is of loose coupling between microservices where any m
     1. StreamingEndpoint  ->  streaming.REGION.oci.oraclecloud.com:9092 where REGION is the region that you provisioned your stream in (i.e. us-ashburn-1)
     1. Username ->  your full username
     2. Password ->  the auth token for your user
+1. You may need to install the Confluent.Kafka libraries using NuGet 
 1. Execute *dotnet run* to run the tester.  You can validate message production in the OCI Console as well within 1 minute of publication.
 
 ## References:
 
-* https://docs.confluent.io/clients-confluent-kafka-dotnet/current/overview.htm
+* https://docs.confluent.io/clients-confluent-kafka-dotnet/current/overview.html
 * https://docs.confluent.io/platform/current/clients/confluent-kafka-dotnet/_site/api/Confluent.Kafka.html
 * https://docs.oracle.com/en-us/iaas/Content/Streaming/Tasks/kafkacompatibility_topic-Configuration.htm

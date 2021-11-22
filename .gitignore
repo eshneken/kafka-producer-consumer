@@ -2,6 +2,3 @@ appsettings.json
 .vscode
 bin
 obj
-System*
-librdk*
-Confluent*
