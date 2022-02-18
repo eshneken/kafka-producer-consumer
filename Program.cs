@@ -40,7 +40,7 @@ namespace kafka_producer_consumer
             using (var consumerA = new ConsumerBuilder<string, string>(consumerAConfig).Build())
             {
                 consumerA.Subscribe(Program.Topic);
-                
+
                 for (int i = 0; i < 2; i++) {
                     var result = consumerA.Consume(10000);
                     if(result != null) {
@@ -69,7 +69,7 @@ namespace kafka_producer_consumer
             using (var consumerA = new ConsumerBuilder<string, string>(consumerAConfig).Build())
             {
                 consumerA.Subscribe(Topic);
-                
+
                 for (int i = 0; i < 3; i++) {
                     var result = consumerA.Consume(10000);
                     if(result != null) {
@@ -85,7 +85,8 @@ namespace kafka_producer_consumer
         // connection settings
         var config = new ConfigurationBuilder()
                 .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json").Build();
+                .AddJsonFile("appsettings.json", optional: true)
+                .AddEnvironmentVariables().Build();
         var endpoint = config.GetValue<string>("StreamingEndpoint");
         var username = config.GetValue<string>("Username");
         var password = config.GetValue<string>("Password");
@@ -94,8 +95,8 @@ namespace kafka_producer_consumer
         Program.Topic = "topic-a";
 
         // producer
-        Program.producerConfig = new ProducerConfig 
-                { 
+        Program.producerConfig = new ProducerConfig
+                {
                 BootstrapServers = endpoint,
                 SecurityProtocol = SecurityProtocol.SaslSsl,
                 SaslMechanism = SaslMechanism.Plain,
