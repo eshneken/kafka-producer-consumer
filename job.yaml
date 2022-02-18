@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kakfa-job
+spec:
+  template:
+    spec:
+      containers:
+      - image: <region>.ocir.io/<namespace>/kafka-producer-consumer
+        name: kafka-job
+        envFrom:
+          - secretRef:
+              name: kafka-secret
+        resources: {}
+      restartPolicy: Never
+      imagePullSecrets:
+        - name: ocirsecret

@@ -8,15 +8,40 @@ The usecase this surfaces is of loose coupling between microservices where any m
 
 ## Usage
 
-1. In the OCI Console, create a stream using default settings.  You can choose to create a stream pool or use the default.  
-1. In the OCI Console, create a Kafka Connect Configuration.
-1. In the OCI Console, go to your user settings and create an *Auth Token*.  Note down the token as well as your full username (i.e oracleidentitycloudservice/first.last@company.com)
-1. Rename *appsettings.template.json* to *appsettings.json*.  Replace the following values:
+1. In the OCI Console, create a stream using default settings.  You can choose to create a stream pool or use the default.
+2. In the OCI Console, create a Kafka Connect Configuration.
+3. In the OCI Console, go to your user settings and create an *Auth Token*.  Note down the token as well as your full username (i.e oracleidentitycloudservice/first.last@company.com)
+4. Rename *appsettings.template.json* to *appsettings.json*.  Replace the following values:
     1. StreamingEndpoint  ->  streaming.REGION.oci.oraclecloud.com:9092 where REGION is the region that you provisioned your stream in (i.e. us-ashburn-1)
     1. Username ->  your full username
     2. Password ->  the auth token for your user
-1. You may need to install the Confluent.Kafka libraries using NuGet 
-1. Execute *dotnet run* to run the tester.  You can validate message production in the OCI Console as well within 1 minute of publication.
+5. You may need to install the Confluent.Kafka libraries using NuGet
+6. Execute *dotnet run* to run the tester.  You can validate message production in the OCI Console as well within 1 minute of publication.
+
+
+## Running in Kubernetes
+1. In the OCI console, create an OKE cluster with default settings. Use the *Access Cluster* menu in your new cluster to set up local cluster access.
+2. Build the Docker image and push it to OCIR
+    1. Log into OCIR: `docker login <region>.ocir.io -u <namespace>/<username> -p <auth token>`
+    2. `docker build -t <region>.ocir.io/<namespace>/kafka-producer-consumer .`
+    3. `docker push <region>.ocir.io/<namespace>/kafka-producer-consumer`
+    4. Update the image name in *job.yml*
+4. Create a secret for kubernetes to pull the image from OCIR:
+```
+kubectl create secret docker-registry ocirsecret \
+--docker-server=<region>.ocir.io \
+--docker-username='<namespace>/<username>' \
+--docker-password='<auth-token>' \
+--docker-email='<email>'
+```
+3. The credentials in *appsettings.json* are not included in the docker image for security reasons. Instead, you will create a kubernetes secret with the credentials, which will be injected at runtime:
+```
+kubectl create secret generic kafka-secret \
+--from-literal=STREAMINGENDPOINT=<streaming endpoint from above> \
+--from-literal=USERNAME=<username from above> \
+--from-literal=PASSWORD=<auth-token>
+```
+4. Deploy the application to kubernetes as a job: `kubectl apply -f job.yaml`
 
 ## References:
 
